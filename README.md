@@ -4,14 +4,15 @@ Giao diện áp dụng brand guideline DESIGN.md: UEH Navy #005F69, cam #F26F33,
 
 ## Khởi chạy
 
-Cần Node.js 24 trở lên. Không cần cài gói phụ thuộc.
+Cần Node.js 24.x. Cài dependency bằng `npm ci` trước lần chạy đầu.
 
 ```powershell
 cd 'C:\Users\Dell\Downloads\tạo ứng dụng'
+npm ci
 npm start
 ```
 
-Mở http://localhost:3000. Chạy kiểm tra bằng `npm test`.
+Mở http://localhost:3000. Chạy kiểm tra bằng `npm test`. Nếu deploy Vercel, làm theo [DEPLOY_VERCEL.md](DEPLOY_VERCEL.md) để cấu hình database từ xa và mật khẩu tài khoản mẫu.
 
 Tài khoản minh họa, cùng mật khẩu **Demo@123**:
 
@@ -26,9 +27,9 @@ Lần chạy đầu tạo 20 nhân viên, 8 cộng tác viên, ca làm, công th
 
 ## Cấu trúc
 
-`server.js`: HTTP API, đăng nhập, kiểm tra quyền, SQLite và dữ liệu mẫu. `index.html`: giao diện đáp ứng tiếng Việt. `test.js`: kiểm tra nghiệp vụ trên database tạm. `hr.sqlite`: database thật tạo khi chạy, không xóa nếu cần giữ lịch sử.
+`server.js`: HTTP API, đăng nhập, kiểm tra quyền và dữ liệu mẫu. `database.js`: SQLite cục bộ hoặc libSQL từ xa, giao dịch có rollback. `api/index.js` và `vercel.json`: entrypoint và routing Vercel. `index.html`: giao diện đáp ứng tiếng Việt. Các tệp `*.test.js` và `test.js`: kiểm tra nghiệp vụ và triển khai. `hr.sqlite`: database thật tạo khi chạy cục bộ, không xóa nếu cần giữ lịch sử.
 
-SQLite chứa hồ sơ và tài khoản, ca làm, người tham gia với đơn giá lịch sử, lượt chấm công, yêu cầu, kết quả bàn giao, cấu hình và nhật ký. Mỗi thay đổi API thực hiện trong giao dịch; mật khẩu dùng scrypt và cookie phiên HttpOnly. Phiên hết hạn sau 8 giờ, khởi động lại máy chủ cần đăng nhập lại. Nhân viên/CTV chỉ đọc dữ liệu của mình; HR và điều phối đọc dữ liệu bộ phận. Chỉ HR sửa hồ sơ, cấu hình và thanh toán.
+Database chứa hồ sơ và tài khoản, ca làm, người tham gia với đơn giá lịch sử, lượt chấm công, yêu cầu, kết quả bàn giao, cấu hình, nhật ký và phiên đăng nhập. Mỗi thay đổi API thực hiện trong giao dịch; mật khẩu dùng scrypt và cookie phiên HttpOnly (Secure trên Vercel). Phiên hết hạn sau 8 giờ và được giữ qua cold start. Token phiên chỉ lưu bản băm trong database. Nhân viên/CTV chỉ đọc dữ liệu của mình; HR và điều phối đọc dữ liệu bộ phận. Chỉ HR sửa hồ sơ, cấu hình và thanh toán.
 
 ## Đã thực hiện
 
@@ -42,7 +43,7 @@ SQLite chứa hồ sơ và tài khoản, ca làm, người tham gia với đơn 
 
 ## Giới hạn cần biết
 
-- Bản chạy cục bộ, chưa triển khai hosting. Máy chủ chỉ lắng nghe localhost. Trước khi dùng thật qua mạng cần HTTPS, quản lý bí mật, giới hạn thử đăng nhập, sao lưu và triển khai có giám sát.
+- Có cấu hình Vercel với database Turso/libSQL từ xa; cần thiết lập URL, token và mật khẩu mẫu trước khi dùng. Không dùng SQLite cục bộ hay `/tmp` để lưu dữ liệu trên Vercel. Máy chủ local chỉ lắng nghe localhost. Trước khi dùng thật cần giới hạn thử đăng nhập, sao lưu và triển khai có giám sát.
 - Không có gửi email, thông báo đẩy, đặt lại mật khẩu hoặc quản lý phiên nhiều máy. Tài khoản mẫu cần thay trước sử dụng thật.
 - Lịch thể hiện ca, chưa có bảng trạng thái văn phòng/từ xa/nghỉ cho từng nhân sự từng ngày. Văn phòng trên tổng quan dựa theo check-in; hiện trường dựa trên phân công, chưa phải xác nhận có mặt.
 - Lịch rảnh/bận lưu dưới hồ sơ và yêu cầu; chưa tự chặn phân công theo lịch bận. Chưa sửa ca đã tạo; có thể hủy và tạo lại.

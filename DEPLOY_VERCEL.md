@@ -18,7 +18,7 @@ Mở project `ungdungquanlynhansu` → **Settings → Environment Variables**, t
 | --- | --- |
 | `TURSO_DATABASE_URL` | URL database lấy ở bước 1 |
 | `TURSO_AUTH_TOKEN` | Token đọc/ghi của database |
-| `DEMO_PASSWORD` | Mật khẩu riêng tối thiểu 12 ký tự cho các tài khoản mẫu |
+| `DEMO_PASSWORD` | Mật khẩu tối thiểu 5 ký tự cho các tài khoản mẫu; `12345` chỉ dùng thử nghiệm |
 
 Trong **Build and Deployment**:
 

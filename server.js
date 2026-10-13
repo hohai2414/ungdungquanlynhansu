@@ -40,11 +40,11 @@ async function initialize() {
     const seedPassword = process.env.DEMO_PASSWORD || "Demo@123";
     if (
       process.env.VERCEL &&
-      (!process.env.DEMO_PASSWORD || seedPassword.length < 12) &&
+      (!process.env.DEMO_PASSWORD || seedPassword.length < 5) &&
       !(await db.prepare("SELECT id FROM people LIMIT 1").get())
     )
       fail(
-        "Thêm DEMO_PASSWORD tối thiểu 12 ký tự vào Vercel để khởi tạo tài khoản mẫu.",
+        "Thêm DEMO_PASSWORD tối thiểu 5 ký tự vào Vercel để khởi tạo tài khoản mẫu.",
         503,
       );
     if (!(await db.prepare("SELECT id FROM people LIMIT 1").get())) {
